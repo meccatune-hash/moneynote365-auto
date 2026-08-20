@@ -1,0 +1,70 @@
+name: MN365 Daily Investment Report
+
+on:
+  # 매일 오전 8시 (한국시간) = UTC 23:00 (전날)
+  schedule:
+    - cron: '0 23 * * 0-4'   # 월~금 평일 (UTC 23:00 = KST 08:00)
+    - cron: '0 22 * * 0-4'   # 여유분 (필요시 주석 해제)
+
+  # 수동 실행 버튼 (GitHub Actions 페이지에서 클릭 가능)
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: '강제 실행 여부'
+        required: false
+        default: 'true'
+
+jobs:
+  daily-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 의존성 설치
+        run: |
+          pip install --upgrade pip
+          pip install \
+            requests \
+            python-dotenv \
+            yfinance \
+            google-genai \
+            schedule \
+            pytz \
+            jinja2
+
+      - name: 로그 디렉토리 생성
+        run: mkdir -p logs/data
+
+      - name: .env 파일 생성 (GitHub Secrets에서)
+        run: |
+          cat > .env << EOF
+          WP_URL=${{ secrets.WP_URL }}
+          WP_USERNAME=${{ secrets.WP_USERNAME }}
+          WP_PASSWORD=${{ secrets.WP_PASSWORD }}
+          WP_API_URL=${{ secrets.WP_URL }}/wp-json/wp/v2
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          UNSPLASH_ACCESS_KEY=${{ secrets.UNSPLASH_ACCESS_KEY }}
+          EOF
+
+      - name: 일일 투자 보고서 생성 & 발행
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: 1
+        run: python main.py
+
+      - name: 로그 업로드 (실패시 디버깅용)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-report-log-${{ github.run_number }}
+          path: logs/
+          retention-days: 7

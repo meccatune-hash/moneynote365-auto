@@ -1,0 +1,8 @@
+requests
+python-dotenv
+yfinance
+google-genai
+schedule
+pytz
+jinja2
+Pillow
