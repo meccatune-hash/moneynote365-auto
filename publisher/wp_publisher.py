@@ -122,8 +122,9 @@ def upload_image(image_path, title=""):
 
 
 def publish_post(title, content, category_ids=None, tag_ids=None,
-                 featured_media_id=None, excerpt="", status="publish"):
-    """포스트 발행 (2단계: NinjaFirewall 우회 + WAF 자동 정제)"""
+                 featured_media_id=None, excerpt="", status="publish",
+                 seo_meta=None):
+    """포스트 발행 (2단계: NinjaFirewall 우회 + WAF 자동 정제 + Yoast SEO)"""
     headers = get_auth_header()
     headers["Content-Type"] = "application/json"
 
@@ -131,13 +132,13 @@ def publish_post(title, content, category_ids=None, tag_ids=None,
     content = sanitize_for_waf(content)
     print(f"  [WAF] 콘텐츠 정제 완료 ({len(content):,}자)")
 
-    # Step 1: 제목만으로 빈 임시 포스트 생성 (방화벽 통과)
+    # Step 1: 빈 임시 포스트 생성
     draft_data = {
-        "title": title,
-        "content": "<p>로딩 중...</p>",
-        "status": "draft",
+        "title":      title,
+        "content":    "<p>로딩 중...</p>",
+        "status":     "draft",
         "categories": category_ids or [],
-        "tags": tag_ids or [],
+        "tags":       tag_ids or [],
     }
     r1 = requests.post(f"{WP_API_URL}/posts", json=draft_data,
                        headers=headers, timeout=30)
@@ -148,14 +149,24 @@ def publish_post(title, content, category_ids=None, tag_ids=None,
     post_id = r1.json()["id"]
     print(f"  [OK] 임시 포스트 생성 (ID: {post_id})")
 
-    # Step 2: 전체 내용으로 업데이트 (POST → PATCH, 방화벽 덜 엄격)
+    # Step 2: 전체 내용 + SEO 메타 업데이트
     update_data = {
         "content": content,
         "excerpt": excerpt,
-        "status": status,
+        "status":  status,
+        "meta": {
+            # Yoast SEO 메타
+            "_yoast_wpseo_metadesc":            excerpt[:155],
+            "_yoast_wpseo_schema_article_type": "NewsArticle",
+            # Open Graph
+            "_og_type": "article",
+        }
     }
     if featured_media_id:
         update_data["featured_media"] = featured_media_id
+    if seo_meta:
+        update_data["meta"].update(seo_meta.get("yoast_meta", {}))
+        update_data["meta"].update(seo_meta.get("og_meta", {}))
 
     r2 = requests.post(f"{WP_API_URL}/posts/{post_id}",
                        json=update_data, headers=headers, timeout=60)
@@ -165,9 +176,8 @@ def publish_post(title, content, category_ids=None, tag_ids=None,
         print(f"       URL: {post['link']}")
         return post["id"], post["link"]
     else:
-        print(f"  [WARN] 내용 업데이트 실패 ({r2.status_code}), 임시 포스트만 존재")
+        print(f"  [WARN] 내용 업데이트 실패 ({r2.status_code})")
         print(f"         {r2.text[:150]}")
-        # 실패해도 draft 포스트 ID 반환 (수동 확인 가능)
         return post_id, r1.json().get("link", "")
 
 

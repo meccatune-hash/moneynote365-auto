@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from data.collectors.us_market import collect_us_market
 from data.collectors.kr_market import collect_kr_market
 from data.collectors.crypto    import collect_crypto
-from report.generator          import generate_daily_report, generate_title, generate_excerpt
+from report.generator          import generate_daily_report, generate_title, generate_excerpt, get_seo_meta
 from publisher.wp_publisher    import publish_post
 from publisher.image_fetcher   import get_all_media_html
 
@@ -99,6 +99,7 @@ def run_daily_report():
     content = generate_daily_report(us_data, kr_data, crypto_data, media_html)
     title   = generate_title(us_data, kr_data, crypto_data)
     excerpt = generate_excerpt(us_data, kr_data, crypto_data)
+    seo     = get_seo_meta(us_data, kr_data, crypto_data, title)
     pprint(f"  [OK] 보고서 생성: {len(content):,}자")
 
     # Step 4: WordPress 발행
@@ -113,6 +114,7 @@ def run_daily_report():
         tag_ids=tag_ids,
         excerpt=excerpt,
         status="publish",
+        seo_meta=seo,
     )
 
     elapsed = (datetime.now() - start).seconds
