@@ -259,9 +259,18 @@ def generate_title(us: dict, kr: dict, coin: dict) -> str:
     sp500  = us.get("indices",{}).get("S&P500",{})
     kospi  = kr.get("kospi",{})
     btc    = coin.get("coins",{}).get("bitcoin",{})
-    sp_pct = sp500.get("change_pct", 0) or 0
-    kp_pct = kospi.get("change_pct", 0) or 0
-    bt_pct = btc.get("change_24h", 0) or 0
+
+    def safe_pct(v):
+        try:
+            f = float(v or 0)
+            import math
+            return 0.0 if math.isnan(f) else f
+        except:
+            return 0.0
+
+    sp_pct = safe_pct(sp500.get("change_pct"))
+    kp_pct = safe_pct(kospi.get("change_pct"))
+    bt_pct = safe_pct(btc.get("change_24h"))
 
     if   kp_pct <= -3: mood = "급락 경보"
     elif kp_pct <= -1: mood = "하락 지속"
@@ -269,8 +278,9 @@ def generate_title(us: dict, kr: dict, coin: dict) -> str:
     elif kp_pct >= 0:  mood = "소폭 상승"
     else:              mood = "혼조 마감"
 
+    sp_str = f"S&P500 {sp_pct:+.2f}%" if sp_pct != 0 else "S&P500 집계중"
     return (f"[{ds}({wd})] 머니노트365 일일 투자 보고서 | "
-            f"S&P500 {sp_pct:+.2f}% · KOSPI {kp_pct:+.2f}% · "
+            f"{sp_str} · KOSPI {kp_pct:+.2f}% · "
             f"BTC {bt_pct:+.2f}% — {mood}")
 
 
