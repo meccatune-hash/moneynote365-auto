@@ -1,53 +1,28 @@
-name: MN365 Category Reports (09:00 KST)
+name: MN365 Category Reports
 
 on:
-  # 매일 오전 9시 KST = UTC 00:00
   schedule:
-    - cron: '0 0 * * *'   # UTC 00:00 = KST 09:00 매일
-
+    - cron: '0 0 * * *'
   workflow_dispatch:
-    inputs:
-      force_run:
-        description: '강제 실행'
-        required: false
-        default: 'true'
 
 jobs:
   category-reports:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 25
     steps:
-      - name: 코드 체크아웃
-        uses: actions/checkout@v4
-
-      - name: Python 3.11 설정
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-
-      - name: 패키지 설치
-        run: pip install -r requirements.txt
-
-      - name: 카테고리 보고서 발행
+      - run: pip install -r requirements.txt
+      - name: Set WP_API_URL
+        run: echo "WP_API_URL=${{ secrets.WP_URL }}/wp-json/wp/v2" >> $GITHUB_ENV
+      - name: Run category reports
         env:
-          PYTHONUTF8: 1
-          WP_URL:        ${{ secrets.WP_URL }}
-          WP_API_URL:    ${{ secrets.WP_URL }}/wp-json/wp/v2
-          WP_USERNAME:   ${{ secrets.WP_USERNAME }}
-          WP_PASSWORD:   ${{ secrets.WP_PASSWORD }}
+          PYTHONUTF8: '1'
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main_categories.py
-
-      - name: 로그 저장
-        if: always()
-        run: echo "카테고리 보고서 실행: $(date '+%Y-%m-%d %H:%M')" >> category_log.txt
-
-      - name: 로그 업로드
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: category-log-${{ github.run_number }}
-          path: category_log.txt
-          retention-days: 7
