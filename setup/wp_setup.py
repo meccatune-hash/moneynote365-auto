@@ -26,6 +26,8 @@ CATEGORIES = [
     {"name": "📈 경제 지표", "slug": "economic-indicators", "desc": "GDP, CPI, 실업률, FOMC 등 주요 경제지표 분석"},
     {"name": "💡 투자 전략", "slug": "investment-strategy", "desc": "포트폴리오 구성, 투자 전략, 리스크 관리"},
     {"name": "📚 투자 공부방", "slug": "invest-study", "desc": "주식, 코인, 경제 기초 개념 학습 공간"},
+    {"name": "🎬 연예·엔터테인먼트", "slug": "entertainment", "desc": "매일 아침·저녁 최신 연예계 핫이슈, 방송/드라마, K-POP, 영화 소식 종합 브리핑"},
+    {"name": "⚽ 스포츠 뉴스", "slug": "sports", "desc": "매일 아침·저녁 국내외 스포츠 주요 소식, 축구·야구·골프 핫이슈 및 경기 분석 브리핑"},
 ]
 
 # ============================================================
