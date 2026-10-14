@@ -87,7 +87,7 @@ def run_sports_pipeline(edition: str = None):
     # Step 2: AI 리포트 생성
     print(f"\n[Step 2] AI {edition_kr} 스포츠 브리핑 생성 (핫이슈 TOP 기사 집중 분석)")
     content = generate_sports_report(news_data, edition=edition)
-    title   = generate_sports_title(edition=edition)
+    title   = generate_sports_title(news_data=news_data, edition=edition)
     excerpt = generate_sports_excerpt(edition=edition)
 
     # Step 2.5: 관련 사진 2~3장 자동 수집·업로드 및 본문/썸네일 배치

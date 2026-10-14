@@ -66,7 +66,7 @@ def main():
     # Step 2: AI 뉴스 브리핑 생성
     print("\n[Step 2] AI 모닝 뉴스 브리핑 생성")
     content = generate_morning_news(news_data)
-    title   = generate_news_title()
+    title   = generate_news_title(news_data=news_data)
     excerpt = generate_news_excerpt()
 
     # Step 2.5: 관련 사진 2~3장 자동 수집·업로드 및 본문/썸네일 배치

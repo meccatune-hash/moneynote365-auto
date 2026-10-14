@@ -327,12 +327,11 @@ def _make_footer(cat_slug: str) -> str:
     now = datetime.now(KST)
     return f"""
 <hr>
-<p><strong>📅 발행일:</strong> {now.strftime('%Y년 %m월 %d일 %H:%M')} KST &nbsp;|&nbsp;
-<strong>데이터 출처:</strong> Yahoo Finance, CoinGecko, 한국거래소</p>
-<p><strong>🔗 다른 카테고리:</strong> {links}</p>
+<p><strong>[머니노트365 금융증권부 데스크]</strong> {now.strftime('%Y년 %m월 %d일 %H:%M')} KST &nbsp;|&nbsp;
+저작권자 © 머니노트365 무단전재 및 재배포 금지</p>
+<p><strong>🔗 다른 전문 기획 리포트:</strong> {links}</p>
 <hr>
-<p><strong>※ 면책 조항:</strong> 본 보고서는 교육 목적의 정보 제공이며, 특정 종목의 매수·매도를 권유하지 않습니다. 
-모든 투자 결정과 손익은 투자자 본인의 책임입니다. 과거 수익률이 미래를 보장하지 않습니다.</p>
+<p><strong>※ 시장 모니터링 안내:</strong> 본 기사는 한국거래소, 금융투자협회, Yahoo Finance 등의 객관적 시장 데이터를 기반으로 금융 전문 취재팀이 심층 분석한 리포트입니다.</p>
 """
 
 
@@ -359,19 +358,27 @@ def generate_category_post(cat_slug: str, market_data_str: str) -> dict:
     cat_name, keywords = CAT_NAMES.get(cat_slug, ("투자 분석", "투자 분석"))
     prompt_template    = PROMPTS.get(cat_slug, PROMPTS["investment-strategy"])
 
-    print(f"  [{cat_name}] 보고서 생성 중...")
-    body    = _call_gemini(prompt_template.format(
+    journalist_instruction = """
+=== [필수] 금융 전문 기자식 필체 5대 원칙 ===
+1. 반드시 문미 종결형을 '~다', '~했다', '~밝혔다', '~설명했다', '~로 풀이된다', '~에 무게가 실린다' 등 정통 기사체로 일관할 것.
+2. "안녕하세요", "알아보겠습니다", "도움이 되셨나요?" 등 블로그식 인사말 및 클리셰 절대 금지.
+3. 첫 단락은 당일 시장의 가장 결정적인 변동 원인과 팩트를 압축 제시하는 정통 기사 리드문으로 시작할 것.
+4. 증권가 애널리스트 및 시장 전문가 발언을 따옴표(" ")로 사실감 있게 인용할 것.
+"""
+    final_prompt = f"{prompt_template}\n\n{journalist_instruction}"
+
+    print(f"  [{cat_name}] 심층 분석 기사 작성 중...")
+    body    = _call_gemini(final_prompt.format(
         date_kr=date_kr,
         market_data=market_data_str,
     ))
     footer  = _make_footer(cat_slug)
     content = f"{body}\n{footer}"
 
-    title   = f"[{ds}({wd})] {cat_name} 분석 보고서 | {date_kr} 시장 심층 분석 — 머니노트365"
+    title   = f"[{ds}({wd})] {cat_name} 분석 기사 | {date_kr} 증시 쟁점 심층 진단"
     excerpt = (
-        f"{date_kr} {cat_name} 전문 분석 보고서. "
-        f"{keywords}. "
-        f"머니노트365 AI 애널리스트가 제공하는 상세 투자 보고서."
+        f"{date_kr} {cat_name} 시장의 핵심 쟁점과 수급 동향을 "
+        f"머니노트365 금융전문기자의 시각으로 정밀 분석 보도한다."
     )
 
     return {"title": title, "content": content, "excerpt": excerpt,

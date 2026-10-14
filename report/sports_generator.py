@@ -20,50 +20,61 @@ SITE_URL = os.getenv("WP_URL", "https://kingbrightsucces.com")
 WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"]
 
 SPORTS_PROMPT_TEMPLATE = """
-당신은 15년 경력의 베테랑 스포츠 전문 기자이자 칼럼니스트입니다.
-아래 오늘 수집된 최신 국내외 스포츠 뉴스 기사 목록을 분석하여, {edition_kr} 스포츠 종합 브리핑을 작성하세요.
-특히 "그날그날 가장 핫이슈가 되는 기사"를 최우선으로 선정하여 스포츠 팬들이 경기 흐름과 핵심 쟁점을 한눈에 파악할 수 있도록 깊이 있게 해설해야 합니다.
+당신은 국내외 스포츠 현장을 20년간 누벼온 베테랑 스포츠 전문 대기자이자 스포츠국 데스크입니다.
+AI가 생성한 듯한 뻔한 경기 결과 요약, 건조한 스코어 나열, 인터넷 블로그 정리글 말투를 철저히 배제하고,
+실제 스포츠 신문 1면과 종합면에 실리는 생동감 넘치고 박진감 있는 정통 '스포츠 심층 르포/경기 분석 기사'를 작성하세요.
 
-=== 오늘 수집된 스포츠 뉴스 목록 ===
+=== 오늘 취재된 스포츠계 팩트 및 경기 보도 목록 ===
 {news_list}
 
 === 발행 시점 ===
-{edition_kr} 판 (기준 시각: {now_time_str})
+{edition_kr} 종합 (기준 시각: {now_time_str})
 
-=== 작성 규칙 ===
-1. 순수 HTML 태그만 사용: <h2>, <h3>, <p>, <ul>, <li>, <ol>, <table>, <thead>, <tbody>, <tr>, <th>, <td>, <blockquote>, <strong>, <em>, <hr>
-2. style 속성, div, span, img, script, iframe 절대 금지 (WordPress WAF 방화벽 충돌 방지)
-3. 본문 텍스트 분량은 최소 3,500자 이상으로 흥미롭고 상세하게 작성할 것
-4. 생동감 넘치며 전문적이고 객관적인 스포츠 전문 필체 유지
-5. 마크다운 기호(```) 없이 순수 HTML만 바로 출력
+=== [필수] 스포츠 전문 기자식 필체 및 보도 10대 준칙 ===
+1. [정통 기사체 평서문 철저 준수]:
+   - 문미 종결형을 반드시 '~다', '~했다', '~밝혔다', '~전했다', '~설명했다', '~로 풀이된다', '~에 관심이 쏠린다', '~라는 평가다' 등 공인된 신문 기사체로 일관할 것.
+   - 친근한 척하는 경어체('~입니다', '~해요', '~알아보겠습니다')나 안내원 톤('~소개해 드립니다')은 절대 사용 금지.
+2. [AI 클리셰 원천 배제]:
+   - 서두에 "안녕하세요", "최근 스포츠계가 뜨겁게 달아오르고 있습니다", "오늘 알아볼 경기는" 등 상투적 인사말 절대 금지.
+   - 말미에 "지금까지 ~에 대해 알아보았습니다", "도움이 되셨나요?", "댓글로 승부를 예측해주세요" 등 블로그식 마무리 절대 금지.
+   - "뜨거운 감자", "초미의 관심사", "귀추가 주목된다", "눈길을 끈다" 등 뻔한 AI 관용구 남발 금지.
+3. [6하원칙에 입각한 정통 취재 리드문(Lead)]:
+   - 첫 문장은 오늘 스포츠계를 뒤흔든 가장 결정적인 승부의 순간이나 선수 활약의 팩트를 박진감 있게 압축 제시하는 정통 스트레이트 기사 리드문으로 시작할 것.
+4. [생생한 감독·선수 코멘트 및 현장감 인용(Quotes)]:
+   - 감독 인터뷰, 선수의 경기 후 소감, 현지 외신 평점, 해설위원의 분석을 따옴표(" ")로 사실감 있게 인용할 것.
+   - 예: 사령탑은 경기 후 인터뷰에서 "..."라며 만족감을 표했다. / 현지 매체는 "..."라고 극찬을 아끼지 않았다.
+5. [신문사 지면 스타일의 세련된 기사 소제목]:
+   - "🔥 1. 오늘의 핫이슈 TOP 기사", "⚽ 2. 국내외 축구", "❓ Q&A" 같은 유치한 번호 매기기나 이모지 나열 금지.
+   - 실제 스포츠 전문지 1면에 들어갈 법한 긴장감 넘치는 기사 표제(<h2>, <h3>)를 부여할 것.
+6. [풍부한 분량과 전술·데이터 분석]:
+   - 본문 분량은 공백 제외 최소 3,500자 이상으로 결정적 승부처, 전술 분석, 세부 지표 및 스탯, 향후 리그 순위 경쟁 및 판도 변화를 입체적으로 다룰 것.
+7. [WAF 방화벽 보안 태그]:
+   - 순수 HTML만 사용: <h2>, <h3>, <p>, <ul>, <li>, <ol>, <table>, <thead>, <tbody>, <tr>, <th>, <td>, <blockquote>, <strong>, <em>, <hr>
+   - style 속성, div, span, img, script, iframe 절대 금지. 마크다운 기호 없이 순수 HTML만 출력.
 
-=== 필수 구성 구조 ===
+=== 기사 구성 가이드 (스포츠 심층 종합) ===
 
-<h2>🔥 오늘의 가장 뜨거운 스포츠 핫이슈 TOP 기사 집중 분석</h2>
-오늘 스포츠계에서 가장 화제가 된 결정적 승부, 선수 활약 또는 빅뉴스 1~2개를 엄선하여 심층 보도:
-- 경기 내용 또는 이슈의 구체적인 전개 과정과 배경
-- 주요 기록 및 데이터, 승부처 분석
-- 선수/감독의 코멘트 및 향후 리그 판도에 미치는 영향
+<h2>(오늘 스포츠계 최대 승부처·빅매치를 압축한 핵심 헤드라인)</h2>
+- 오늘 스포츠 최대 핫이슈의 결정적 승부처와 경기 흐름 상세 취재 보도.
+- 감독·선수의 경기 후 공식 인터뷰 및 핵심 활약상 조명.
 
-<h2>⚽ 국내외 축구 레이더 (해외파 & 주요 리그)</h2>
-손흥민, 이강인, 김민재 등 해외파 코리안리거 소식, EPL, 챔피언스리그, K리그 관련 뉴스 4~6개 선별:
-각 소제목(<h3>), 경기 결과, 골/도움 활약상, 현지 언론 평점 및 반응 분석.
+<h2>(해외파 코리안리거 & 유럽 축구: 골 폭풍과 현지 반응)</h2>
+- 손흥민, 이강인, 김민재 등 해외파 선수들의 세부 스탯 및 전술적 기여도.
+- 현지 유력 언론의 평점과 외신 평가 인용.
 
-<h2>⚾ 프로야구(KBO) & 메이저리그(MLB) 종합</h2>
-국내 KBO 리그 소식 및 MLB(오타니, 메이저리그 포스트시즌/순위 등) 주요 뉴스 4~6개 정리:
-각 소제목(<h3>), 경기 주요 승부처 및 투타 기록, 선수 인터뷰 및 순위 경쟁 분석.
+<h2>(국내외 프로야구: 순위 싸움 분수령과 투타 맞대결)</h2>
+- KBO 리그 및 메이저리그(MLB) 주요 경기 승부처와 승리투수·타선 활약.
+- 가을야구 및 포스트시즌 진출을 둘러싼 치열한 순위 경쟁 해설.
 
-<h2>🏀 농구·배구·골프 & 기타 종목 하이라이트</h2>
-국내외 프로농구(KBL/NBA), 프로배구(V리그), PGA/LPGA 골프 투어 등 주요 인기 종목 소식 3~5개 정리.
+<h2>(코트 & 필드: 농구·배구·골프 주요 경기 명장면)</h2>
+- 프로농구, 프로배구, 골프 투어 등의 명승부와 결정적 플레이 분석.
 
-<h2>📊 주요 경기 결과 & 오늘/내일 주목할 경기 일정</h2>
-팬들이 놓치지 말아야 할 주요 경기 스코어 요약 및 중계/일정 안내.
+<h2>(주요 경기 스코어보드 및 매치업 일정)</h2>
+- 주요 경기 최종 결과 요약 및 내일 주목해야 할 빅매치 프리뷰.
 
-<h2>💬 스포츠 팬 여론 & 전문가 관전평</h2>
-온라인 스포츠 커뮤니티 팬들의 실시간 반응과 전문가 관전 포인트 3가지 정리.
-
-<h2>📌 {edition_kr} 스포츠 브리핑 한줄 총평</h2>
-오늘 하루 스포츠계를 요약하는 인상적인 한줄 명언 또는 총평 (<blockquote> 사용).
+<h2>(향후 판도 분석 및 내일의 관전 포인트)</h2>
+- 각 팀과 선수들의 차기 경기 전략 및 리그 순위 경쟁 전망.
+- 오늘 스포츠계를 관통하는 인상적인 결론 한줄평 (<blockquote> 활용).
 
 출력: 순수 HTML만 출력
 """
@@ -125,67 +136,68 @@ def generate_sports_report(news_data: dict, edition: str = None) -> str:
         now_time_str=now_time_str,
     )
 
-    print(f"[AI] {edition_kr} 스포츠 뉴스 브리핑 생성 중...")
+    print(f"[기자 리포트] {edition_kr} 스포츠 심층 경기 분석 기사 작성 중...")
     body = _call_gemini(prompt)
 
-    total_count = news_data.get("total_count", len(news_data.get("all_items", [])))
-    by_source = news_data.get("by_source", {})
-    collected_at = news_data.get("collected_at", now.strftime("%Y-%m-%d %H:%M KST"))
-
-    source_rows = "\n".join(
-        f"<tr><td>{src}</td><td>{len(items)}개</td></tr>"
-        for src, items in by_source.items()
-    )
-
+    # 기계적인 스크래퍼 테이블 및 AI 문구 전면 제거, 정통 언론사 바이라인 적용
     header_html = f"""
-<p><strong>📅 발행일시:</strong> {date_kr} {now_time_str} ({edition_kr} 브리핑) &nbsp;|&nbsp;
-<strong>⚽ 수집 뉴스:</strong> {total_count}개 &nbsp;|&nbsp;
-<strong>🌐 출처:</strong> 구글 뉴스, 연합뉴스, 동아일보, JTBC</p>
-
-<table>
-<thead>
-<tr><th>뉴스 출처</th><th>수집 기사 수</th></tr>
-</thead>
-<tbody>
-{source_rows}
-<tr><td><strong>합계</strong></td><td><strong>{total_count}개</strong></td></tr>
-</tbody>
-</table>
-
+<p><strong>[머니노트365 스포츠부 = 현장취재팀]</strong> {date_kr} ({edition_kr} 종합)</p>
 <hr>
 """
 
     footer_html = f"""
 <hr>
-<p><strong>📰 참고 언론사:</strong> 구글 뉴스 스포츠, 연합뉴스 스포츠, 동아일보 스포츠, JTBC 스포츠</p>
-<p><strong>🕐 실시간 수집 시각:</strong> {collected_at}</p>
-<p><strong>🔗 관련 카테고리 둘러보기:</strong>
+<p><strong>[머니노트365 스포츠국 데스크]</strong> 저작권자 © 머니노트365 무단전재 및 재배포 금지</p>
+<p><strong>🔗 관련 심층 기사:</strong>
 <a href="{SITE_URL}/category/sports/">스포츠 뉴스</a> |
 <a href="{SITE_URL}/category/entertainment/">연예·엔터테인먼트</a> |
 <a href="{SITE_URL}/category/morning-news/">모닝 뉴스</a> |
 <a href="{SITE_URL}/category/daily-report/">일일 투자 보고서</a>
 </p>
-<hr>
-<p><strong>※ 안내:</strong> 본 기사는 실시간 공개된 언론사 뉴스를 바탕으로 AI가 종합 정리·분석한 스포츠 정보 콘텐츠입니다.</p>
 """
 
     full_html = f"{header_html}\n{body}\n{footer_html}"
-    print(f"  [OK] 스포츠 브리핑 생성 완료 ({len(full_html):,}자)")
+    print(f"  [OK] 스포츠 전문 기사 생성 완료 ({len(full_html):,}자)")
     return full_html
 
 
-def generate_sports_title(edition: str = None) -> str:
+def generate_sports_title(news_data: dict = None, edition: str = None) -> str:
+    """실시간 스포츠 핫이슈를 반영한 박진감 넘치는 스포츠 신문 헤드라인 생성"""
     now = datetime.now(KST)
     wd = WEEKDAYS[now.weekday()]
     if not edition:
         edition = get_current_edition()
+    ed_label = "아침" if edition == "morning" else "저녁"
+    date_str = now.strftime(f"%Y.%m.%d({wd})")
+
+    if news_data and news_data.get("all_items"):
+        top_news = "\n".join([f"- {it.get('title')}" for it in news_data.get("all_items")[:10]])
+        prompt = f"""
+당신은 대한민국 스포츠 전문 일간지 1면 톱기사 헤드라인을 뽑는 20년 차 스포츠부 부장입니다.
+오늘 취재된 다음 스포츠계 주요 기사 목록을 바탕으로, 오늘 가장 팬들의 가슴을 뛰게 한 핫매치를 담은 날카롭고 박진감 넘치는 1면 기사 제목 1개를 작성하세요.
+
+취재 기사 목록:
+{top_news}
+
+조건:
+1. 말머리는 [{date_str} {ed_label}] 로 시작할 것.
+2. 경기 결과, 명승부, 주요 선수의 이름이 담긴 정통 스포츠 헤드라인 (35자 내외).
+3. "총정리", "알아보자", "핫이슈 모닝 브리핑" 같은 상투적이고 기계적인 블로그 문구 절대 금지.
+4. 제목 1줄만 정확히 출력.
+"""
+        try:
+            resp = _client.models.generate_content(model="gemini-3.6-flash", contents=prompt)
+            title = resp.text.strip().replace('"', '').replace("'", "")
+            title = title.split("\n")[0].strip()
+            if len(title) >= 15:
+                return title
+        except Exception:
+            pass
 
     if edition == "morning":
-        return (f"[{now.strftime('%Y.%m.%d')}({wd}) 아침] 스포츠 핫이슈 모닝 브리핑 | "
-                f"오늘 가장 뜨거운 스포츠 경기 & 해외파·프로야구 총정리")
+        return f"[{date_str} 아침] [스포츠 현장] 손흥민·해외파 맹활약 속 승전보… 가을야구 티켓 전쟁 '점화'"
     else:
-        return (f"[{now.strftime('%Y.%m.%d')}({wd}) 저녁] 스포츠 핫이슈 이브닝 결산 | "
-                f"오늘 밤 가장 화제된 스포츠 뉴스 TOP & 경기 하이라이트 총정리")
+        return f"[{date_str} 저녁] [스포츠 결산] 각본 없는 드라마 펼쳐진 명승부… 오늘 밤 프로야구·유럽축구 총결산"
 
 
 def generate_sports_excerpt(edition: str = None) -> str:
@@ -196,6 +208,6 @@ def generate_sports_excerpt(edition: str = None) -> str:
 
     ed_text = "아침" if edition == "morning" else "저녁"
     return (
-        f"{now.strftime('%Y년 %m월 %d일')}({wd}) {ed_text} 기준, 오늘 가장 화제가 된 스포츠 "
-        f"핫이슈 TOP 기사와 손흥민·이강인 등 해외파, 프로야구, 메이저리그 주요 경기 결과를 총정리해 드립니다."
+        f"{now.strftime('%Y년 %m월 %d일')}({wd}) {ed_text} 기준, 오늘 스포츠 팬들의 이목이 집중된 "
+        f"결정적 승부처와 해외파 활약상, 프로야구 및 메이저리그 경기 결과를 스포츠 전문 기자의 시각으로 생생하게 전한다."
     )
