@@ -5,8 +5,11 @@
 """
 import sys, os, requests, base64
 from datetime import datetime, timezone, timedelta
-from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
+try:
+    sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
+except Exception:
+    pass
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -85,13 +88,23 @@ def main():
             tag_slugs = ["투자분석", "머니노트365", cat_slug.replace("-", "")]
             tag_ids = get_tag_ids_for(tag_slugs)
 
+            # 이미지 자동 수집 및 본문/썸네일 반영 (2~3장)
+            from publisher.image_manager import enrich_post_with_images
+            featured_media_id, content_with_images = enrich_post_with_images(
+                content=post_data["content"],
+                category_type=cat_slug,
+                title=post_data["title"],
+                max_images=3
+            )
+
             # WordPress 발행
-            content_clean = sanitize_for_waf(post_data["content"])
+            content_clean = sanitize_for_waf(content_with_images)
             post_id, post_url = publish_post(
                 title=post_data["title"],
                 content=content_clean,
                 category_ids=[cat_id] if cat_id else [],
                 tag_ids=tag_ids,
+                featured_media_id=featured_media_id,
                 excerpt=post_data["excerpt"],
                 status="publish",
             )

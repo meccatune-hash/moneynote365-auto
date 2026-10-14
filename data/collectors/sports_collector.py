@@ -17,6 +17,7 @@ SPORTS_FEEDS = {
     "구글 스포츠 헤드라인": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=ko&gl=KR&ceid=KR:ko",
     "구글 축구·해외파 핫이슈": "https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC+%EC%86%90%ED%9D%A5%EB%AF%BC+%EC%9D%B4%EA%B0%95%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko",
     "구글 야구·KBO·MLB":    "https://news.google.com/rss/search?q=KBO+%ED%94%84%EB%A1%9C%EC%95%BC%EA%B5%AC+MLB&hl=ko&gl=KR&ceid=KR:ko",
+    "SBS 스포츠":            "https://news.sbs.co.kr/news/SectionRssFeed.do?sectionId=09&plink=RSSREADER",
     "연합뉴스 스포츠":        "https://www.yna.co.kr/rss/sports.xml",
     "동아일보 스포츠":        "https://rss.donga.com/sports.xml",
     "JTBC 스포츠":           "https://fs.jtbc.co.kr/RSS/sports.xml",
@@ -60,10 +61,26 @@ def _fetch_rss(url: str, timeout: int = 10) -> list:
         # RSS 2.0
         for item in root.findall(".//item"):
             title = _clean_text(item.findtext("title", ""))
-            desc  = _clean_text(item.findtext("description", ""))[:300]
+            raw_desc = item.findtext("description", "")
+            desc  = _clean_text(raw_desc)[:300]
             link  = item.findtext("link", "").strip()
             pub   = item.findtext("pubDate", "").strip()
             dt    = _parse_pub_date(pub)
+
+            # 이미지 URL 추출
+            image_url = ""
+            enc = item.find("enclosure")
+            if enc is not None and "image" in enc.attrib.get("type", ""):
+                image_url = enc.attrib.get("url", "")
+            if not image_url:
+                m = re.search(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', raw_desc)
+                if m:
+                    image_url = m.group(1)
+            if not image_url:
+                for el in item:
+                    if "media" in el.tag.lower() and el.attrib.get("url"):
+                        image_url = el.attrib.get("url")
+                        break
 
             if title:
                 items.append({
@@ -72,6 +89,7 @@ def _fetch_rss(url: str, timeout: int = 10) -> list:
                     "link":      link,
                     "pubDate":   pub,
                     "timestamp": dt.timestamp() if dt else 0,
+                    "image_url": image_url,
                 })
 
         # Atom 형식

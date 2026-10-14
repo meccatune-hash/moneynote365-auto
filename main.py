@@ -102,6 +102,15 @@ def run_daily_report():
     seo     = get_seo_meta(us_data, kr_data, crypto_data, title)
     pprint(f"  [OK] 보고서 생성: {len(content):,}자")
 
+    # Step 3.5: 관련 고품질 금융 이미지 2~3장 자동 수집 및 썸네일/본문 반영
+    from publisher.image_manager import enrich_post_with_images
+    featured_media_id, content = enrich_post_with_images(
+        content=content,
+        category_type="daily-report",
+        title=title,
+        max_images=3
+    )
+
     # Step 4: WordPress 발행
     pprint("\n[Step 4] WordPress 발행")
     cat_id  = get_id_by_slug("categories", "daily-report")
@@ -112,6 +121,7 @@ def run_daily_report():
         content=content,
         category_ids=[cat_id] if cat_id else [],
         tag_ids=tag_ids,
+        featured_media_id=featured_media_id,
         excerpt=excerpt,
         status="publish",
         seo_meta=seo,

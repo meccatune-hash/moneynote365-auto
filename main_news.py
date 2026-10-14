@@ -5,8 +5,11 @@
 """
 import sys, os, requests, base64
 from datetime import datetime, timezone, timedelta
-from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
+try:
+    sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
+except Exception:
+    pass
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -66,6 +69,16 @@ def main():
     title   = generate_news_title()
     excerpt = generate_news_excerpt()
 
+    # Step 2.5: 관련 사진 2~3장 자동 수집·업로드 및 본문/썸네일 배치
+    from publisher.image_manager import enrich_post_with_images
+    featured_media_id, content = enrich_post_with_images(
+        content=content,
+        category_type="morning-news",
+        title=title,
+        news_items=news_data.get("all_items", news_data.get("news", [])),
+        max_images=3
+    )
+
     # Step 3: WordPress 발행
     print("\n[Step 3] WordPress 발행")
     cat_id  = get_id_by_slug("categories", "morning-news")
@@ -82,6 +95,7 @@ def main():
         content=content,
         category_ids=[cat_id] if cat_id else [],
         tag_ids=tag_ids,
+        featured_media_id=featured_media_id,
         excerpt=excerpt,
         status="publish",
     )

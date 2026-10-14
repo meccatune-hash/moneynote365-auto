@@ -46,19 +46,34 @@ def _fetch_rss(url: str, timeout: int = 10) -> list:
         # RSS 2.0
         for item in root.findall(".//item"):
             title = item.findtext("title", "").strip()
-            desc  = item.findtext("description", "").strip()
+            raw_desc = item.findtext("description", "").strip()
             link  = item.findtext("link", "").strip()
             pub   = item.findtext("pubDate", "").strip()
 
-            if title:
-                # HTML 태그 제거
+            image_url = ""
+            enc = item.find("enclosure")
+            if enc is not None and "image" in enc.attrib.get("type", ""):
+                image_url = enc.attrib.get("url", "")
+            if not image_url:
                 import re
-                desc = re.sub(r'<[^>]+>', '', desc)[:300]
+                m = re.search(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', raw_desc)
+                if m:
+                    image_url = m.group(1)
+            if not image_url:
+                for el in item:
+                    if "media" in el.tag.lower() and el.attrib.get("url"):
+                        image_url = el.attrib.get("url")
+                        break
+
+            if title:
+                import re
+                desc = re.sub(r'<[^>]+>', '', raw_desc)[:300]
                 items.append({
-                    "title":   title,
-                    "desc":    desc,
-                    "link":    link,
-                    "pubDate": pub,
+                    "title":     title,
+                    "desc":      desc,
+                    "link":      link,
+                    "pubDate":   pub,
+                    "image_url": image_url,
                 })
 
         # Atom 형식
