@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 자동 스케줄러 - 일일 시장 보고서 및 정치·연예·스포츠 뉴스 자동 발행
-- 정치 뉴스: 매일 오전 07:15 / 오후 18:15
-- 연예 뉴스: 매일 오전 07:30 / 오후 18:30
-- 스포츠 뉴스: 매일 오전 07:45 / 오후 18:45
-- 시장 보고서: 매일 오전 08:00
+- 아침: 07:00 뉴스 종합 발행(정치, 연예, 스포츠) | 08:00 시장 투자 보고서
+- 저녁: 18:30 뉴스 종합 결산(정치, 연예, 스포츠)
 python scheduler.py 로 백그라운드 실행
 """
 import schedule
@@ -13,9 +11,7 @@ import logging
 from datetime import datetime
 
 from main import run_daily_report
-from main_politics import run_politics_pipeline
-from main_entertainment import run_entertainment_pipeline
-from main_sports import run_sports_pipeline
+from run_all_news import run_all
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,82 +24,43 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
+def job_morning_news():
+    log.info("⏰ [아침 07:00] 정치·연예·스포츠 모닝 브리핑 일괄 실행 시작")
+    try:
+        run_all(edition="morning")
+    except Exception as e:
+        log.error(f"아침 뉴스 일괄 실행 오류: {e}")
+
+
 def job_market_report():
-    log.info("스케줄된 일일 시장 투자 보고서 실행 시작")
+    log.info("⏰ [오전 08:00] 일일 시장 투자 보고서 실행 시작")
     try:
         run_daily_report()
     except Exception as e:
-        log.error(f"시장 보고서 실행 중 오류: {e}")
+        log.error(f"시장 보고서 실행 오류: {e}")
 
 
-def job_politics_morning():
-    log.info("스케줄된 [아침 모닝] 정치 이슈 브리핑 실행")
+def job_evening_news():
+    log.info("⏰ [저녁 18:30] 정치·연예·스포츠 이브닝 결산 일괄 실행 시작")
     try:
-        run_politics_pipeline(edition="morning")
+        run_all(edition="evening")
     except Exception as e:
-        log.error(f"정치 뉴스(모닝) 실행 오류: {e}")
-
-
-def job_politics_evening():
-    log.info("스케줄된 [저녁 이브닝] 정치 이슈 결산 실행")
-    try:
-        run_politics_pipeline(edition="evening")
-    except Exception as e:
-        log.error(f"정치 뉴스(이브닝) 실행 오류: {e}")
-
-
-def job_entertainment_morning():
-    log.info("스케줄된 [아침 모닝] 연예 뉴스 브리핑 실행")
-    try:
-        run_entertainment_pipeline(edition="morning")
-    except Exception as e:
-        log.error(f"연예 뉴스(모닝) 실행 오류: {e}")
-
-
-def job_entertainment_evening():
-    log.info("스케줄된 [저녁 이브닝] 연예 뉴스 결산 실행")
-    try:
-        run_entertainment_pipeline(edition="evening")
-    except Exception as e:
-        log.error(f"연예 뉴스(이브닝) 실행 오류: {e}")
-
-
-def job_sports_morning():
-    log.info("스케줄된 [아침 모닝] 스포츠 뉴스 브리핑 실행")
-    try:
-        run_sports_pipeline(edition="morning")
-    except Exception as e:
-        log.error(f"스포츠 뉴스(모닝) 실행 오류: {e}")
-
-
-def job_sports_evening():
-    log.info("스케줄된 [저녁 이브닝] 스포츠 뉴스 결산 실행")
-    try:
-        run_sports_pipeline(edition="evening")
-    except Exception as e:
-        log.error(f"스포츠 뉴스(이브닝) 실행 오류: {e}")
+        log.error(f"저녁 뉴스 일괄 실행 오류: {e}")
 
 
 # ============================================================
-# 스케줄 등록 (하루 2회 아침 / 저녁)
+# 스케줄 등록
 # ============================================================
-# 아침 발행
-schedule.every().day.at("07:15").do(job_politics_morning)
-schedule.every().day.at("07:30").do(job_entertainment_morning)
-schedule.every().day.at("07:45").do(job_sports_morning)
+schedule.every().day.at("07:00").do(job_morning_news)
 schedule.every().day.at("08:00").do(job_market_report)
+schedule.every().day.at("18:30").do(job_evening_news)
 
-# 저녁 발행
-schedule.every().day.at("18:15").do(job_politics_evening)
-schedule.every().day.at("18:30").do(job_entertainment_evening)
-schedule.every().day.at("18:45").do(job_sports_evening)
-
-log.info("=" * 60)
-log.info("머니노트365 자동 통합 스케줄러 시작")
-log.info("  [아침] 07:15 정치 | 07:30 연예 | 07:45 스포츠 | 08:00 시장 보고서")
-log.info("  [저녁] 18:15 정치 | 18:30 연예 | 18:45 스포츠")
+log.info("=" * 65)
+log.info("머니노트365 통합 스케줄러 시작")
+log.info("  [아침] 07:00 뉴스 종합(정치/연예/스포츠) | 08:00 시장 투자보고서")
+log.info("  [저녁] 18:30 뉴스 결산(정치/연예/스포츠)")
 log.info("종료: Ctrl+C")
-log.info("=" * 60)
+log.info("=" * 65)
 
 if __name__ == "__main__":
     while True:

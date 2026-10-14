@@ -1,17 +1,18 @@
-name: MN365 Entertainment News
+name: MN365 Evening News
 
 on:
   schedule:
-    # 매일 07:30 KST (아침 모닝 브리핑)
-    - cron: '30 22 * * *'
-    # 매일 18:30 KST (저녁 이브닝 결산 브리핑)
-    - cron: '30 9 * * *'
+    # 매일 18:35 KST (정각/30분 몰림 큐 지연 방지를 위해 18:35분 설정 / UTC 09:35 당일)
+    - cron: '35 9 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  entertainment-news:
+  evening-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,11 +22,11 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Set WP_API_URL
         run: echo "WP_API_URL=${{ secrets.WP_URL }}/wp-json/wp/v2" >> $GITHUB_ENV
-      - name: Run entertainment news
+      - name: Run Politics, Entertainment, and Sports Evening News
         env:
           PYTHONUTF8: '1'
           WP_URL: ${{ secrets.WP_URL }}
           WP_USERNAME: ${{ secrets.WP_USERNAME }}
           WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python main_entertainment.py
+        run: python run_all_news.py --edition evening
