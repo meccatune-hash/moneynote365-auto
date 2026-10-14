@@ -76,26 +76,63 @@ def fetch_google_trends() -> list:
                 pub_elem = item.find("pubDate")
                 pub_date = pub_elem.text.strip() if pub_elem is not None and pub_elem.text else ""
 
+                # 사진 목록 추출
+                pictures = []
+                seen_pic_urls = set()
+
+                pic_elem = item.find("ht:picture", ns)
+                pic_source_elem = item.find("ht:picture_source", ns)
+                if pic_elem is not None and pic_elem.text:
+                    purl = pic_elem.text.strip()
+                    psrc = pic_source_elem.text.strip() if pic_source_elem is not None and pic_source_elem.text else "보도자료"
+                    pictures.append({
+                        "url": purl,
+                        "source": psrc,
+                        "caption": f"'{keyword}' 관련 대표 현장 사진"
+                    })
+                    seen_pic_urls.add(purl)
+
                 news_items = []
                 for n_elem in item.findall("ht:news_item", ns):
                     n_title = n_elem.find("ht:news_item_title", ns)
                     n_snippet = n_elem.find("ht:news_item_snippet", ns)
                     n_url = n_elem.find("ht:news_item_url", ns)
                     n_source = n_elem.find("ht:news_item_source", ns)
+                    n_pic = n_elem.find("ht:news_item_picture", ns)
+
+                    title_str = n_title.text.strip() if n_title is not None and n_title.text else ""
+                    source_str = n_source.text.strip() if n_source is not None and n_source.text else "언론사"
 
                     news_items.append({
-                        "title": n_title.text.strip() if n_title is not None and n_title.text else "",
+                        "title": title_str,
                         "snippet": n_snippet.text.strip() if n_snippet is not None and n_snippet.text else "",
                         "url": n_url.text.strip() if n_url is not None and n_url.text else "",
-                        "source": n_source.text.strip() if n_source is not None and n_source.text else "언론사"
+                        "source": source_str
                     })
+
+                    if n_pic is not None and n_pic.text:
+                        np_url = n_pic.text.strip()
+                        if np_url not in seen_pic_urls:
+                            seen_pic_urls.add(np_url)
+                            # 깨끗한 캡션 생성 (언론사 타이틀 등 활용)
+                            clean_cap = re.sub(r'\[.*?\]', '', title_str).strip()
+                            if len(clean_cap) > 35:
+                                clean_cap = clean_cap[:35] + "..."
+                            if not clean_cap:
+                                clean_cap = f"{keyword} 관련 보도 현장"
+                            pictures.append({
+                                "url": np_url,
+                                "source": source_str,
+                                "caption": clean_cap
+                            })
 
                 trends.append({
                     "keyword": keyword,
                     "traffic_str": traffic_str,
                     "traffic_score": traffic_score,
                     "pub_date": pub_date,
-                    "news_items": news_items
+                    "news_items": news_items,
+                    "pictures": pictures
                 })
 
             if trends:

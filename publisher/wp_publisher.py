@@ -115,11 +115,19 @@ def create_page(title, content, slug, status="publish"):
 def upload_image(image_path, title=""):
     """미디어 라이브러리에 이미지 업로드"""
     headers = get_auth_header()
-    filename = os.path.basename(image_path)
+    raw_name = os.path.basename(image_path)
+    # HTTP 헤더 Latin-1 호환을 위해 파일명을 순수 ASCII로 변환
+    ascii_name = re.sub(r'[^a-zA-Z0-9_\.-]', '_', raw_name)
+    if not ascii_name.endswith(('.jpg', '.jpeg', '.png', '.webp')):
+        ascii_name += '.jpg'
     with open(image_path, "rb") as f:
-        headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+        headers["Content-Disposition"] = f'attachment; filename="{ascii_name}"'
         headers["Content-Type"] = "image/jpeg"
-        resp = requests.post(f"{WP_API_URL}/media", headers=headers, data=f, timeout=30)
+        params = {}
+        if title:
+            params["title"] = title
+            params["alt_text"] = title
+        resp = requests.post(f"{WP_API_URL}/media", headers=headers, data=f, params=params, timeout=30)
     if resp.status_code == 201:
         return resp.json()["id"], resp.json()["source_url"]
     return None, None

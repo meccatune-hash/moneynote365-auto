@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """GitHub Actions 실행 기록 확인"""
-import requests, os
+import requests, os, sys
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 from dotenv import load_dotenv
 load_dotenv()
 

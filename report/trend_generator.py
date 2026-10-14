@@ -144,13 +144,30 @@ def generate_trend_tags(keyword: str) -> list:
     return base_tags
 
 
-def build_trend_post(trend_item: dict) -> dict:
+def make_image_block(img_dict: dict, default_caption: str = "") -> str:
+    """WAF 안전한 표준 워드프레스 이미지 블록 생성"""
+    img_id = img_dict.get("id", "")
+    url = img_dict.get("url", "")
+    caption = img_dict.get("caption") or default_caption
+    source = img_dict.get("source", "언론사 보도자료")
+    return f"""
+<!-- wp:image {{"id":{img_id},"sizeSlug":"large","linkDestination":"none"}} -->
+<figure class="wp-block-image size-large">
+<img src="{url}" alt="{caption}" />
+<figcaption>▲ {caption} (사진 출처: {source})</figcaption>
+</figure>
+<!-- /wp:image -->
+"""
+
+
+def build_trend_post(trend_item: dict, uploaded_images: list = None) -> dict:
     """
     개별 트렌드 아이템을 받아 완성된 WordPress 포스팅 데이터 딕셔너리 생성
     - title
-    - content (WAF 호환 HTML)
+    - content (WAF 호환 HTML + 관련 사진 2~3장 포함)
     - excerpt
     - tags
+    - featured_media_id (대표 썸네일)
     """
     keyword = trend_item.get("keyword", "핫트렌드")
     traffic_str = trend_item.get("traffic_str", "1000+")
@@ -179,7 +196,7 @@ def build_trend_post(trend_item: dict) -> dict:
     excerpt = generate_trend_excerpt(keyword, title)
     tags = generate_trend_tags(keyword)
 
-    # 상단 요약 배지 HTML (WAF 호환: table과 blockquote 활용)
+    # 상단 요약 배지 HTML
     header_html = f"""
 <blockquote>
 <p><strong>🔥 실시간 트렌드 핫이슈 브리핑</strong></p>
@@ -188,6 +205,35 @@ def build_trend_post(trend_item: dict) -> dict:
 </blockquote>
 <hr>
 """
+
+    # 이미지 본문 적절한 위치에 삽입
+    featured_media_id = None
+    if uploaded_images and len(uploaded_images) > 0:
+        featured_media_id = uploaded_images[0]["id"]
+
+        # 사진 1: 상단 헤더 바로 아래 대표 사진
+        img1_html = make_image_block(uploaded_images[0], f"'{keyword}' 관련 대표 현장 사진")
+        header_html += img1_html
+
+        # 사진 2: 팩트 정리 후(네티즌 반응 앞) 삽입
+        if len(uploaded_images) > 1:
+            img2_html = make_image_block(uploaded_images[1], f"'{keyword}' 핵심 사건 관련 보도 현장")
+            if "<h2>💬 3." in body_html:
+                body_html = body_html.replace("<h2>💬 3.", f"{img2_html}\n<h2>💬 3.")
+            elif "<h2>3." in body_html:
+                body_html = body_html.replace("<h2>3.", f"{img2_html}\n<h2>3.")
+            else:
+                body_html = img2_html + body_html
+
+        # 사진 3: FAQ 직전 삽입
+        if len(uploaded_images) > 2:
+            img3_html = make_image_block(uploaded_images[2], f"'{keyword}' 대중 반응 및 현장 이모저모")
+            if "<h2>❓ 5." in body_html:
+                body_html = body_html.replace("<h2>❓ 5.", f"{img3_html}\n<h2>❓ 5.")
+            elif "<h2>5." in body_html:
+                body_html = body_html.replace("<h2>5.", f"{img3_html}\n<h2>5.")
+            else:
+                body_html += img3_html
 
     footer_html = f"""
 <hr>
@@ -205,4 +251,5 @@ def build_trend_post(trend_item: dict) -> dict:
         "content": full_content,
         "excerpt": excerpt,
         "tags": tags,
+        "featured_media_id": featured_media_id,
     }

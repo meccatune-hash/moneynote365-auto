@@ -16,6 +16,10 @@ __pycache__/
 
 # 임시 파일
 *.tmp
+temp_*.jpg
+setup/test_*.py
+setup/cleanup_*.py
+setup/delete_*.py
 .DS_Store
 Thumbs.db
 

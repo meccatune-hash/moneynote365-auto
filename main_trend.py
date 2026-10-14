@@ -8,6 +8,8 @@
 """
 import sys
 import os
+import re
+import time
 import argparse
 import requests
 import base64
@@ -29,11 +31,47 @@ from publisher.wp_publisher import (
     publish_post,
     get_or_create_category,
     get_or_create_tag,
+    upload_image,
     get_auth_header
 )
 
 KST = timezone(timedelta(hours=9))
 WP_API_URL = os.getenv("WP_API_URL")
+
+
+def upload_trend_pictures(keyword: str, pictures: list, max_count: int = 3) -> list:
+    """
+    수집된 관련 사진 후보를 다운로드하여 워드프레스 미디어 라이브러리에 업로드
+    반환: [{'id': media_id, 'url': media_url, 'source': source, 'caption': caption}, ...]
+    """
+    uploaded = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+    }
+    for idx, pic in enumerate(pictures[:max_count], 1):
+        url = pic.get("url")
+        if not url:
+            continue
+        try:
+            resp = requests.get(url, headers=headers, timeout=10)
+            if resp.status_code == 200 and len(resp.content) > 500:
+                tmp_filename = f"temp_trend_{int(time.time()*1000)}_{idx}.jpg"
+                with open(tmp_filename, "wb") as f:
+                    f.write(resp.content)
+                mid, murl = upload_image(tmp_filename, title=f"{keyword} 관련 현장 사진 {idx}")
+                if os.path.exists(tmp_filename):
+                    os.remove(tmp_filename)
+                if mid and murl:
+                    uploaded.append({
+                        "id": mid,
+                        "url": murl,
+                        "source": pic.get("source", "언론사 보도자료"),
+                        "caption": pic.get("caption", f"{keyword} 관련 보도 사진")
+                    })
+                    print(f"    📷 관련 사진 {idx} 업로드 완료 (ID: {mid}) - {pic.get('source')}")
+        except Exception as e:
+            print(f"    [WARN] 사진 {idx} 업로드 건너뜀: {e}")
+    return uploaded
 
 
 def flush_wp_cache():
@@ -85,7 +123,13 @@ def run_trend_pipeline(count: int = 5):
         print(f"\n--- [{idx}/{len(trends)}] '{keyword}' 기사 작성 시작 ---")
 
         try:
-            post_data = build_trend_post(item)
+            # 1) 관련 사진 최대 3장 워드프레스 미디어 라이브러리 업로드
+            pictures = item.get("pictures", [])
+            print(f"  [사진 업로드] '{keyword}' 관련 사진 {len(pictures)}건 중 최대 3건 처리")
+            uploaded_images = upload_trend_pictures(keyword, pictures, max_count=3)
+
+            # 2) 본문에 사진 2~3장 자동 배치된 기사 생성
+            post_data = build_trend_post(item, uploaded_images=uploaded_images)
 
             # 태그 ID 조회 및 생성
             tag_ids = []
@@ -96,12 +140,13 @@ def run_trend_pipeline(count: int = 5):
                 if tid:
                     tag_ids.append(tid)
 
-            # 포스트 발행
+            # 포스트 발행 (대표 썸네일 featured_media 지정 포함)
             res = publish_post(
                 title=post_data["title"],
                 content=post_data["content"],
                 category_ids=[cat_id],
                 tag_ids=tag_ids,
+                featured_media_id=post_data.get("featured_media_id"),
                 excerpt=post_data["excerpt"],
                 status="publish",
                 seo_meta={
