@@ -25,6 +25,7 @@ tok = base64.b64encode(f"{WP_USERNAME}:{WP_PASSWORD}".encode()).decode()
 hdrs = {"Authorization": f"Basic {tok}", "Content-Type": "application/json"}
 
 nav_content = """<!-- wp:navigation-link {"label":"🏠 홈","url":"https://kingbrightsucces.com/","isTopLevelLink":true} /-->
+<!-- wp:navigation-link {"label":"🔥 트렌드 이슈","url":"https://kingbrightsucces.com/category/trend-issues/","isTopLevelLink":true} /-->
 <!-- wp:navigation-link {"label":"🏛️ 정치 이슈","url":"https://kingbrightsucces.com/category/politics/","isTopLevelLink":true} /-->
 <!-- wp:navigation-link {"label":"🎬 연예·엔터","url":"https://kingbrightsucces.com/category/entertainment/","isTopLevelLink":true} /-->
 <!-- wp:navigation-link {"label":"⚽ 스포츠","url":"https://kingbrightsucces.com/category/sports/","isTopLevelLink":true} /-->

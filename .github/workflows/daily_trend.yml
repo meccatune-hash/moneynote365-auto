@@ -1,0 +1,37 @@
+name: MN365 Daily Trend Posting
+
+on:
+  schedule:
+    # 매일 11:20 KST (UTC 02:20) 대한민국 실시간 급상승 트렌드 TOP 5 자동 포스팅
+    - cron: '20 2 * * *'
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Number of trend posts to publish'
+        required: false
+        default: '5'
+
+permissions:
+  contents: read
+
+jobs:
+  trend-posts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Set WP_API_URL
+        run: echo "WP_API_URL=${{ secrets.WP_URL }}/wp-json/wp/v2" >> $GITHUB_ENV
+      - name: Run Daily 5 Trend Posts
+        env:
+          PYTHONUTF8: '1'
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main_trend.py --count ${{ github.event.inputs.count || '5' }}

@@ -33,6 +33,7 @@ HOME_TEMPLATE_CONTENT = """<!-- wp:template-part {"slug":"header","theme":"twent
 	<!-- wp:html -->
 	<div style="display:flex; flex-wrap:wrap; gap:10px; margin:1rem 0 2.5rem; padding:1.25rem; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 4px 14px rgba(10,22,40,0.05); justify-content:center;">
 		<a href="https://kingbrightsucces.com/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:#0A1628; color:#ffffff; font-weight:700; font-size:0.9rem; text-decoration:none;">🏠 전체 홈</a>
+		<a href="https://kingbrightsucces.com/category/trend-issues/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:#ff4500; color:#ffffff; font-weight:700; font-size:0.9rem; text-decoration:none;">🔥 트렌드 이슈</a>
 		<a href="https://kingbrightsucces.com/category/politics/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:#f1f5f9; color:#1e293b; font-weight:600; font-size:0.9rem; text-decoration:none;">🏛️ 정치 이슈</a>
 		<a href="https://kingbrightsucces.com/category/entertainment/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:#f1f5f9; color:#1e293b; font-weight:600; font-size:0.9rem; text-decoration:none;">🎬 연예·엔터</a>
 		<a href="https://kingbrightsucces.com/category/sports/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:#f1f5f9; color:#1e293b; font-weight:600; font-size:0.9rem; text-decoration:none;">⚽ 스포츠 뉴스</a>
@@ -54,6 +55,33 @@ HOME_TEMPLATE_CONTENT = """<!-- wp:template-part {"slug":"header","theme":"twent
 	<!-- /wp:group -->
 
 	<!-- wp:query {"query":{"perPage":6,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false,"taxQuery":null,"parents":[]},"align":"wide","layout":{"type":"default"}} -->
+	<div class="wp-block-query alignwide">
+		<!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+			<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30","left":"var:preset|spacing|30","right":"var:preset|spacing|30"}},"border":{"radius":"12px","width":"1px","style":"solid","color":"#e2e8f0"}},"backgroundColor":"base","layout":{"type":"constrained"}} -->
+			<div class="wp-block-group has-base-background-color has-background has-border-color" style="border-color:#e2e8f0;border-width:1px;border-style:solid;border-radius:12px;padding-top:var(--wp--preset--spacing--30);padding-right:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--preset--spacing--30);box-shadow:0 2px 10px rgba(0,0,0,0.04)">
+				<!-- wp:post-terms {"term":"category","style":{"typography":{"fontSize":"0.78rem","fontWeight":"700"}}} /-->
+				<!-- wp:post-title {"isLink":true,"style":{"typography":{"fontSize":"1.1rem","lineHeight":"1.45"}}} /-->
+				<!-- wp:post-excerpt {"showMoreOnNewLine":false,"excerptLength":20,"style":{"typography":{"fontSize":"0.88rem"}},"textColor":"contrast-3"} /-->
+				<!-- wp:post-date {"isLink":true,"style":{"typography":{"fontSize":"0.8rem"}},"textColor":"contrast-3"} /-->
+			</div>
+			<!-- /wp:group -->
+		<!-- /wp:post-template -->
+	</div>
+	<!-- /wp:query -->
+
+	<!-- 섹션 1-2: 🔥 실시간 트렌드 이슈 -->
+	<!-- wp:group {"align":"wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|20"}}},"layout":{"type":"flex","justifyContent":"space-between","flexWrap":"nowrap"}} -->
+	<div class="wp-block-group alignwide" style="margin-top:var(--wp--preset--spacing--60);margin-bottom:var(--wp--preset--spacing--20);border-top:2px solid #ff4500;padding-top:1.5rem">
+		<!-- wp:heading {"level":2,"style":{"typography":{"fontStyle":"normal","fontWeight":"800"}}} -->
+		<h2 class="wp-block-heading" style="font-style:normal;font-weight:800">🔥 실시간 트렌드 이슈</h2>
+		<!-- /wp:heading -->
+		<!-- wp:paragraph -->
+		<p><a href="https://kingbrightsucces.com/category/trend-issues/" style="font-weight:700;color:#ff4500;text-decoration:none">트렌드 이슈 더보기 →</a></p>
+		<!-- /wp:paragraph -->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":false,"taxQuery":{"category":[196]}},"align":"wide","layout":{"type":"default"}} -->
 	<div class="wp-block-query alignwide">
 		<!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
 			<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30","left":"var:preset|spacing|30","right":"var:preset|spacing|30"}},"border":{"radius":"12px","width":"1px","style":"solid","color":"#e2e8f0"}},"backgroundColor":"base","layout":{"type":"constrained"}} -->

@@ -48,16 +48,27 @@ def job_evening_news():
         log.error(f"저녁 뉴스 일괄 실행 오류: {e}")
 
 
+def job_trend_posts():
+    log.info("⏰ [오전 11:30] 실시간 급상승 트렌드 이슈 5개 자동 포스팅 시작")
+    try:
+        from main_trend import run_trend_pipeline
+        run_trend_pipeline(count=5)
+    except Exception as e:
+        log.error(f"트렌드 포스팅 실행 오류: {e}")
+
+
 # ============================================================
 # 스케줄 등록
 # ============================================================
 schedule.every().day.at("07:00").do(job_morning_news)
 schedule.every().day.at("08:00").do(job_market_report)
+schedule.every().day.at("11:30").do(job_trend_posts)
 schedule.every().day.at("18:30").do(job_evening_news)
 
 log.info("=" * 65)
 log.info("머니노트365 통합 스케줄러 시작")
 log.info("  [아침] 07:00 뉴스 종합(정치/연예/스포츠) | 08:00 시장 투자보고서")
+log.info("  [오전] 11:30 실시간 트렌드 이슈 TOP 5 포스팅")
 log.info("  [저녁] 18:30 뉴스 결산(정치/연예/스포츠)")
 log.info("종료: Ctrl+C")
 log.info("=" * 65)

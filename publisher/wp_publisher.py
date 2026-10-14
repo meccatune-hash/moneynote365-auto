@@ -7,6 +7,10 @@ import os, re, sys, base64, requests
 from dotenv import load_dotenv
 
 load_dotenv()
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 WP_URL     = os.getenv("WP_URL")
 WP_USERNAME = os.getenv("WP_USERNAME")
