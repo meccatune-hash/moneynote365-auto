@@ -41,8 +41,8 @@ CATEGORY_FALLBACK_IMAGES = {
         {"url": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80", "caption": "국내외 주요 영화제 및 문화 엔터테인먼트", "source": "문화예술 자료"},
     ],
     "sports": [
-        {"url": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80", "caption": "국내외 축구 및 주요 리그 경기 현장", "source": "스포츠 현장 자료"},
-        {"url": "https://images.unsplash.com/photo-1529768274076-94dd30c44284?w=800&q=80", "caption": "열기 가득한 프로야구 경기장", "source": "야구장 취재 자료"},
+        {"url": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80", "caption": "국내외 축구 및 주요 리그 경기 현장", "source": "스포츠 현장 자료"},
+        {"url": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80", "caption": "열기 가득한 프로 스포츠 경기장", "source": "스포츠 경기 취재 자료"},
         {"url": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80", "caption": "선수들의 열정과 결정적 승부의 순간", "source": "스포츠 미디어"},
     ],
     "morning-news": [
@@ -54,6 +54,56 @@ CATEGORY_FALLBACK_IMAGES = {
         {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "글로벌 증시 및 일일 금융시장 주요 지표", "source": "금융시장 분석"},
         {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "뉴욕 월스트리트 및 미국 주요 거래소 동향", "source": "뉴욕증시 자료"},
         {"url": "https://images.unsplash.com/photo-1516245834210-c4c142787335?w=800&q=80", "caption": "주요 자산 시장 및 디지털 금융 트렌드", "source": "투자시장 리포트"},
+    ],
+    "kr-stock": [
+        {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "국내 증시 및 코스피·코스닥 시장 시세 동향", "source": "한국 거래소 자료"},
+        {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "국내 주요 상장 기업 실적 및 증권가 분석", "source": "시장 리서치"},
+        {"url": "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=800&q=80", "caption": "투자자 수급 동향 및 주가 지표 차트", "source": "증시 데이터 분석"},
+    ],
+    "us-stock": [
+        {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "뉴욕증권거래소(NYSE) 및 나스닥 주요 지수 동향", "source": "뉴욕증시 자료"},
+        {"url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "caption": "월스트리트 주요 금융 기관 및 글로벌 테크 기업", "source": "해외 비즈니스"},
+        {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "미국 S&P500 및 빅테크 종목 모멘텀", "source": "글로벌 마켓"},
+    ],
+    "global-stock": [
+        {"url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "caption": "글로벌 증시 및 아시아·유럽 주요 지수 흐름", "source": "국제 금융 시장"},
+        {"url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80", "caption": "세계 거시경제 환경 및 주요국 주식 시장", "source": "글로벌 증권 브리핑"},
+        {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "해외 자산 배분 및 글로벌 펀드 플로우", "source": "글로벌 리포트"},
+    ],
+    "crypto": [
+        {"url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80", "caption": "블록체인 네트워크 및 디지털 자산 생태계", "source": "가상자산 리서치"},
+        {"url": "https://images.unsplash.com/photo-1516245834210-c4c142787335?w=800&q=80", "caption": "비트코인 및 주요 암호화폐 시세 흐름", "source": "암호화폐 시장 동향"},
+        {"url": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=800&q=80", "caption": "디지털 금융 혁신 및 온체인 데이터 분석", "source": "디지털 에셋 뉴스"},
+    ],
+    "bonds-rates": [
+        {"url": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80", "caption": "중앙은행 기준금리 결정 및 국채 수익률 추이", "source": "통화정책 자료"},
+        {"url": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80", "caption": "채권 시장 자금 흐름 및 글로벌 금리 동향", "source": "채권시장 분석"},
+        {"url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80", "caption": "금리 인하·인상 전망 및 매크로 지표 분석", "source": "금융 통계"},
+    ],
+    "economic-indicators": [
+        {"url": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80", "caption": "주요 경제 성장률 및 인플레이션 지표 발표", "source": "경제 통계청 자료"},
+        {"url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80", "caption": "고용·소비·물가 등 거시 경제 핵심 지표", "source": "매크로 지표 리포트"},
+        {"url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80", "caption": "글로벌 교역량 및 산업 생산 동향", "source": "국제 경제 기구"},
+    ],
+    "futures-options": [
+        {"url": "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=800&q=80", "caption": "파생상품 시장 변동성 및 선물·옵션 만기 동향", "source": "파생시장 브리핑"},
+        {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "헤지 펀드 포지션 및 기관 수급 분석", "source": "시장 전략 자료"},
+        {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "지수 선물 베이시스 및 옵션 변동성 지표", "source": "선물옵션 분석"},
+    ],
+    "investment-strategy": [
+        {"url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80", "caption": "중장기 자산 배분 및 포트폴리오 최적화 전략", "source": "투자 전략 연구"},
+        {"url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80", "caption": "리스크 관리 및 수익률 제고 방안 모색", "source": "자산운용 인사이트"},
+        {"url": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80", "caption": "시장 사이클 대응 및 섹터 로테이션 전략", "source": "투자 리포트"},
+    ],
+    "invest-study": [
+        {"url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80", "caption": "기초 금융 지식 및 실전 투자 분석 기법", "source": "투자 공부방"},
+        {"url": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80", "caption": "재무제표 읽기 및 기업 펀더멘털 분석", "source": "금융 아카데미"},
+        {"url": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80", "caption": "워런 버핏 등 대가들의 투자 철학 분석", "source": "투자 가이드"},
+    ],
+    "short-selling": [
+        {"url": "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=800&q=80", "caption": "대차거래 잔고 및 주요 종목 공매도 비중 추이", "source": "공매도 종합 포털"},
+        {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "숏커버링 가능성 및 하방 압력 점검", "source": "증시 리스크 분석"},
+        {"url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=80", "caption": "외국인·기관 공매도 거래 대금 분석", "source": "시장 데이터"},
     ],
     "default": [
         {"url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80", "caption": "실시간 경제 및 주요 사회적 관심 현안", "source": "머니노트365 자료"},
