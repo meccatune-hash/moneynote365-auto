@@ -4,6 +4,7 @@
 매일 07:00 KST (UTC 22:00 전날) 자동 실행
 """
 import sys, os, requests, base64
+from pathlib import Path
 from datetime import datetime, timezone, timedelta
 sys.path.insert(0, str(Path(__file__).parent))
 try:

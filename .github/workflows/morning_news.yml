@@ -23,6 +23,7 @@ jobs:
       - name: Set WP_API_URL
         run: echo "WP_API_URL=${{ secrets.WP_URL }}/wp-json/wp/v2" >> $GITHUB_ENV
       - name: Run Global Morning News
+        continue-on-error: true
         env:
           PYTHONUTF8: '1'
           WP_URL: ${{ secrets.WP_URL }}
@@ -31,6 +32,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main_news.py
       - name: Run Politics, Entertainment, and Sports Morning News
+        continue-on-error: true
         env:
           PYTHONUTF8: '1'
           WP_URL: ${{ secrets.WP_URL }}

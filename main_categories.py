@@ -4,6 +4,7 @@
 매일 09:00 KST 실행
 """
 import sys, os, requests, base64
+from pathlib import Path
 from datetime import datetime, timezone, timedelta
 sys.path.insert(0, str(Path(__file__).parent))
 try:
