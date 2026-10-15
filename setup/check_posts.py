@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """현재 포스트 전체 상태 확인"""
 import requests, base64, os
+import sys
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 from dotenv import load_dotenv
 load_dotenv()
 
